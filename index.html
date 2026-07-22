@@ -60,6 +60,10 @@
 
   /* HERO ILLUSTRATION */
   .fig{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface);margin-top:16px;}
+  .fig img{width:100%;display:block;background:#0d0d0f;}
+  .fig figcaption{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;}
+  .fig.bar-shot{max-width:574px;}
+  .fig.narrow-shot{max-width:386px;}
   .fig.illus{background:#FBFBFA;}
   .fig.illus svg{width:100%;height:auto;display:block;}
   .fig.illus.hero{border:0;background:transparent;margin-top:30px;}
@@ -254,6 +258,14 @@
         <div>
           <h3>Ha charten framför dig i TradingView</h3>
           <p>Det är där du ser vad symbolen faktiskt heter, till exempel <span class="kbd">BTCUSDT</span>, och vilken tidsram du tittar på. Det är de två sakerna du sen ger Claude.</p>
+          <figure class="fig reveal">
+            <img src="images/steg1-tradingview.jpg" alt="TradingView med Teslas dagschart uppe, ljusstakar och volym">
+            <figcaption>Steg 1 · charten du tittar på, här Tesla på dagsgrafen</figcaption>
+          </figure>
+          <figure class="fig narrow-shot reveal">
+            <img src="images/steg1-symbol.png" alt="Närbild på TradingViews verktygsfält. Symbolfältet TSLA är markerat med en röd etta och tidsramen D med en röd tvåa">
+            <figcaption>Steg 1 · symbolen (1) och tidsramen (2), det är de två du ger Claude</figcaption>
+          </figure>
           <p>Verktyget i nästa steg hämtar marknadsdatan själv, så du behöver <b>inget betalkonto på TradingView</b> för att köra det här.</p>
         </div>
       </div>
@@ -275,6 +287,10 @@
         <div>
           <h3>Låt Claude installera den åt dig</h3>
           <p>Klistra in länken i Claude och säg åt den att implementera den som en MCP-server. <b>Claude sköter resten.</b> Projektet är skrivet i Python, så datorn behöver Python 3.10 eller senare och <b>uv</b>. Har du dem inte kan du be Claude fixa det först.</p>
+          <figure class="fig bar-shot reveal">
+            <img src="images/steg3-claude.png" alt="Claudes textruta med GitHub-länken inklistrad och instruktionen implementera denna under">
+            <figcaption>Steg 3 · länken inklistrad, sen bara implementera denna</figcaption>
+          </figure>
           <p>Om Claude kör fast, ge den raden nedan. Den är projektets egen rekommenderade rad, och den ska du kopiera exakt.</p>
           <div class="prompt">
             <div class="prompt-bar"><span class="lbl">Installationsrad · kopiera exakt</span><button class="prompt-copy" type="button">Kopiera</button></div>
