@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Låt Claude analysera marknaden · steg för steg | @joudgor</title>
-<meta name="description" content="Koppla Claude till live marknadsdata en gång, sen kan du fråga på svenska om trend, RSI, Bollinger, volym och screeners. Gratis, ingen API-nyckel. Steg för steg, på svenska.">
-<meta property="og:title" content="Låt Claude analysera marknaden">
+<title>Låt Claude analysera charten · steg för steg | @joudgor</title>
+<meta name="description" content="Koppla Claude till live marknadsdata en gång, sen säger du vilken chart du tittar på och frågar på svenska om trend, RSI, Bollinger, volym och screeners. Gratis, ingen API-nyckel.">
+<meta property="og:title" content="Låt Claude analysera charten">
 <meta property="og:description" content="Koppla Claude till marknadsdata en gång. Sen frågar du på svenska. Gratis, ingen API-nyckel.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -189,8 +189,8 @@
   <header class="hero">
     <div class="wrap">
       <div class="eyebrow reveal">Saker du kan göra med AI</div>
-      <h1 class="reveal">Låt Claude analysera <em>marknaden</em> åt dig</h1>
-      <p class="lede reveal">Du kopplar Claude till live marknadsdata en gång. Sen frågar du på vanlig svenska: trend, RSI, Bollinger, volym, screeners, till och med backtester på färdiga strategier. <b>Claude hämtar siffrorna och räknar på dem åt dig.</b> Gratis, ingen API-nyckel, inget konto.</p>
+      <h1 class="reveal">Låt Claude analysera <em>charten</em> åt dig</h1>
+      <p class="lede reveal">Du kopplar Claude till live marknadsdata en gång. Sen säger du vilken chart du tittar på och frågar på vanlig svenska: trend, RSI, Bollinger, volym, screeners, till och med backtester på färdiga strategier. <b>Claude hämtar siffrorna och räknar på dem åt dig.</b> Gratis och ingen API-nyckel.</p>
       <div class="fmt reveal">
         <span>Claude</span>
         <span>Gratis · MIT</span>
@@ -198,13 +198,13 @@
       </div>
 
       <figure class="fig illus hero reveal">
-        <svg viewBox="0 0 1040 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Marknadsdata går in, Claude svarar med en analys">
-          <title>Marknadsdata in, analys ut</title>
+        <svg viewBox="0 0 1040 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Charten går in, Claude svarar med en analys">
+          <title>Charten in, analys ut</title>
           <rect x="0" y="0" width="1040" height="420" rx="16" fill="#FBFBFA" stroke="#EAEAEA"/>
 
           <!-- candles panel -->
           <rect x="60" y="70" width="380" height="280" rx="14" fill="#FFFFFF" stroke="#E4E1DA"/>
-          <text x="84" y="102" font-family="'JetBrains Mono',monospace" font-size="11" fill="#787774">MARKNADSDATA</text>
+          <text x="84" y="102" font-family="'JetBrains Mono',monospace" font-size="11" fill="#787774">CHARTEN</text>
           <g stroke="#346538" stroke-width="8" stroke-linecap="round">
             <line x1="106" y1="250" x2="106" y2="200"/><line x1="146" y1="262" x2="146" y2="214"/>
             <line x1="266" y1="236" x2="266" y2="176"/><line x1="346" y1="212" x2="346" y2="146"/>
@@ -244,13 +244,22 @@
   <section class="wrap narrow" style="margin:0 auto;padding-top:8px">
     <div class="sec-head reveal">
       <h2>Steg för steg</h2>
-      <div class="sec-sub">Du gör steg 1 och 2 en gång. Sen kan du fråga Claude om marknaden när du vill.</div>
+      <div class="sec-sub">Du gör steg 2 och 3 en gång. Sen kan du fråga Claude om charten när du vill.</div>
     </div>
 
     <div class="steps">
 
       <div class="step reveal">
         <div class="step-n">1</div>
+        <div>
+          <h3>Ha charten framför dig i TradingView</h3>
+          <p>Det är där du ser vad symbolen faktiskt heter, till exempel <span class="kbd">BTCUSDT</span>, och vilken tidsram du tittar på. Det är de två sakerna du sen ger Claude.</p>
+          <p>Verktyget i nästa steg hämtar marknadsdatan själv, så du behöver <b>inget betalkonto på TradingView</b> för att köra det här.</p>
+        </div>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-n">2</div>
         <div>
           <h3>Kopiera länken till projektet</h3>
           <p>Det här är verktyget du ska installera. Du behöver inte leta upp det själv, <b>kopiera bara länken här nedanför</b>.</p>
@@ -262,11 +271,11 @@
       </div>
 
       <div class="step reveal">
-        <div class="step-n">2</div>
+        <div class="step-n">3</div>
         <div>
           <h3>Låt Claude installera den åt dig</h3>
-          <p>Klistra in länken i Claude och säg åt den att installera projektet som en MCP-server. Claude sköter resten. Det är ett <b>Python-projekt</b>, så du behöver Python 3.10 eller senare och <b>uv</b> på datorn.</p>
-          <p>Kör Claude fast, ge den raden nedan. Den är projektets egen rekommenderade rad, och den ska du kopiera exakt.</p>
+          <p>Klistra in länken i Claude och säg åt den att implementera den som en MCP-server. <b>Claude sköter resten.</b> Projektet är skrivet i Python, så datorn behöver Python 3.10 eller senare och <b>uv</b>. Har du dem inte kan du be Claude fixa det först.</p>
+          <p>Om Claude kör fast, ge den raden nedan. Den är projektets egen rekommenderade rad, och den ska du kopiera exakt.</p>
           <div class="prompt">
             <div class="prompt-bar"><span class="lbl">Installationsrad · kopiera exakt</span><button class="prompt-copy" type="button">Kopiera</button></div>
             <pre>uv tool run --from git+https://github.com/atilaahmettaner/tradingview-mcp.git tradingview-mcp</pre>
@@ -276,19 +285,20 @@
       </div>
 
       <div class="step reveal">
-        <div class="step-n">3</div>
+        <div class="step-n">4</div>
         <div>
-          <h3>Fråga Claude om en symbol</h3>
-          <p>Nu kan du fråga på vanlig svenska. Skriv vilken symbol och vilken tidsram du menar, så hämtar Claude datan och räknar på den. Fråga till exempel: <b>"Analysera BTCUSDT på fyratimmarsgrafen. Vad säger trenden, RSI, Bollinger och volymen?"</b></p>
+          <h3>Säg åt Claude att analysera charten</h3>
+          <p>Nu frågar du på vanlig svenska. Skriv symbolen och tidsramen från steg 1, så hämtar Claude den chartens data och räknar på den. Till exempel: <b>"Analysera BTCUSDT på fyratimmarsgrafen. Vad säger trenden, RSI, Bollinger och volymen?"</b></p>
           <p>Den klarar också screeners (dagens vinnare och förlorare), jämförelser mellan symboler, och backtester på färdiga strategier som RSI, MACD och Bollinger.</p>
         </div>
       </div>
 
       <div class="step reveal">
-        <div class="step-n">4</div>
+        <div class="step-n">5</div>
         <div>
           <h3>Ge den bättre underlag</h3>
-          <p>Analysen blir bara så bra som det du matar in. Jag är ingen trader, så det här är där du tar över: berätta hur du tänker, vilka nivåer du bryr dig om, och vilka upplägg du vill att den jämför mot. Har du material från traders du litar på kan du låta Claude läsa det och resonera utifrån det.</p>
+          <p>Analysen blir bara så bra som det du matar in. Jag är ingen trader, så det här är där du tar över: berätta hur du tänker, vilka nivåer du bryr dig om, och vilka upplägg du vill att den jämför mot.</p>
+          <p>Mitt tips är att ge den data från de traders du själv tycker är bäst. Låt Claude läsa hur de resonerar och sätt det mot din egen chart, i stället för att fråga rakt ut vad du ska göra.</p>
         </div>
       </div>
 
@@ -306,7 +316,7 @@
     <div style="margin-top:18px">
       <div class="note red reveal"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span><b>Ingen finansiell rådgivning.</b> Projektet skriver det själv. Claude kan ha fel, data kan vara fördröjd, och verktyget kan inte lägga några ordrar. Använd det aldrig som köpsignal.</span></div>
 
-      <div class="note blue reveal"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><span><b>Den läser inte din chart.</b> Den loggar aldrig in på ditt TradingView-konto. Den hämtar publik marknadsdata och indikatorer för den symbol du nämner och räknar på siffrorna. Dina egna ritningar, watchlists och inställningar ser den aldrig.</span></div>
+      <div class="note blue reveal"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><span><b>Säg vilken chart du menar.</b> Claude ser inte din skärm, så den kan inte gissa åt dig. Skriv symbolen och tidsramen, så hämtar den samma marknadsdata som charten bygger på och räknar på den. Linjer och nivåer du själv ritat i TradingView följer inte med, dem får du beskriva i text.</span></div>
 
       <div class="note reveal"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span><b>Stockholmsbörsen funkar inte, och den varnar inte.</b> Frågar du om svenska aktier kan den tyst svara med kryptodata i stället. Kolla alltid vilken symbol och vilken börs svaret faktiskt gäller. Verktyget är byggt för krypto och de stora utländska börserna.</span></div>
 
