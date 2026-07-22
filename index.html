@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Låt Claude analysera marknaden · steg för steg | @joudgor</title>
+<meta name="description" content="Koppla Claude till live marknadsdata en gång, sen kan du fråga på svenska om trend, RSI, Bollinger, volym och screeners. Gratis, ingen API-nyckel. Steg för steg, på svenska.">
+<meta property="og:title" content="Låt Claude analysera marknaden">
+<meta property="og:description" content="Koppla Claude till marknadsdata en gång. Sen frågar du på svenska. Gratis, ingen API-nyckel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F6F3; --bg-alt:#FBFBFA; --surface:#FFFFFF; --border:#EAEAEA; --border-soft:rgba(0,0,0,0.06);
+    --ink:#1F1D1B; --text:#3D3A36; --muted:#787774; --cta:#141210;
+    --red-bg:#FDEBEC; --red-tx:#9F2F2D;
+    --blue-bg:#E1F3FE; --blue-tx:#1F6C9F;
+    --green-bg:#EDF3EC; --green-tx:#346538;
+    --yellow-bg:#FBF3DB; --yellow-tx:#956400;
+    --cloth-bg:#FBECE1; --cloth-tx:#B4481F;
+    --brand:#1A6BFF; --brand-dk:#1457E0;
+    --logo:'Syne','Manrope',sans-serif;
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'Manrope','Helvetica Neue',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono','SF Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;background:var(--bg);}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:400;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 32px;}
+  .narrow{max-width:820px;}
+  .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(620px 420px at 78% -6%, rgba(173,140,90,0.05), rgba(173,140,90,0) 70%);}
+  .page{position:relative;z-index:1;}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;background:rgba(247,246,243,0.72);
+    backdrop-filter:saturate(150%) blur(12px);border-bottom:1px solid var(--border);}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s ease;}
+  .brand:hover{opacity:.65;}
+  .brand .mk{width:26px;height:26px;border-radius:7px;background:#1A6BFF;display:flex;align-items:center;justify-content:center;}
+  .brand .mk span{color:#fff;font-family:var(--logo);font-weight:800;font-size:15px;line-height:1;}
+  .brand b{font-family:var(--logo);font-weight:800;font-size:17px;color:var(--ink);letter-spacing:-0.01em;}
+  nav .handle{font-family:var(--mono);font-weight:500;font-size:12.5px;color:var(--muted);letter-spacing:0.02em;}
+
+  /* HERO */
+  header.hero{padding:96px 0 36px;}
+  .eyebrow{font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+  h1{font-family:var(--serif);font-weight:600;color:var(--ink);font-size:clamp(38px,6vw,66px);line-height:1.04;letter-spacing:-0.03em;margin:22px 0 0;}
+  h1 em{font-style:italic;font-weight:500;color:var(--cloth-tx);}
+  .lede{font-size:19px;line-height:1.65;color:var(--text);margin-top:26px;max-width:700px;}
+  .lede b{color:var(--ink);font-weight:600;}
+
+  .fmt{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px;}
+  .fmt span{font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:0.04em;
+    color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:9999px;padding:7px 14px;}
+
+  /* HERO ILLUSTRATION */
+  .fig{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface);margin-top:16px;}
+  .fig.illus{background:#FBFBFA;}
+  .fig.illus svg{width:100%;height:auto;display:block;}
+  .fig.illus.hero{border:0;background:transparent;margin-top:30px;}
+  .fig.illus.hero svg{border-radius:14px;}
+
+  /* SECTION SHELL */
+  section{padding:58px 0;}
+  .sec-head{margin-bottom:8px;}
+  h2{font-family:var(--serif);font-weight:600;color:var(--ink);font-size:clamp(27px,3.5vw,38px);line-height:1.1;letter-spacing:-0.02em;}
+  .sec-sub{color:var(--muted);font-size:16px;margin-top:10px;max-width:680px;}
+
+  /* STEPS */
+  .steps{margin-top:22px;}
+  .step{display:grid;grid-template-columns:40px 1fr;gap:18px;padding:28px 0;border-top:1px solid var(--border);}
+  .step:first-child{border-top:0;}
+  .step-n{width:34px;height:34px;border-radius:9999px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-weight:600;font-size:14px;background:var(--cloth-bg);color:var(--cloth-tx);}
+  .step h3{font-family:var(--serif);font-weight:600;font-size:21px;color:var(--ink);letter-spacing:-0.01em;margin-bottom:7px;line-height:1.25;}
+  .step p{font-size:15.5px;color:var(--text);line-height:1.62;}
+  .step p b{color:var(--ink);font-weight:600;}
+  .step p+p{margin-top:10px;}
+  .kbd{font-family:var(--mono);font-weight:600;font-size:13px;background:var(--bg);border:1px solid var(--border);
+    border-radius:6px;padding:2px 8px;color:var(--ink);word-break:break-word;}
+
+  /* NOTE */
+  .note{margin-top:15px;font-size:14.5px;color:var(--text);line-height:1.55;background:var(--yellow-bg);
+    border:1px solid rgba(149,100,0,0.14);border-radius:10px;padding:13px 16px;display:flex;gap:11px;}
+  .note .lb{flex:0 0 auto;color:var(--yellow-tx);}
+  .note .lb svg{width:18px;height:18px;display:block;}
+  .note b{color:var(--yellow-tx);font-weight:600;}
+  .note.blue{background:var(--blue-bg);border-color:rgba(31,108,159,0.16);}
+  .note.blue .lb{color:var(--blue-tx);} .note.blue b{color:var(--blue-tx);}
+  .note.red{background:var(--red-bg);border-color:rgba(159,47,45,0.16);}
+  .note.red .lb{color:var(--red-tx);} .note.red b{color:var(--red-tx);}
+
+  /* PROMPT / COPY BOX */
+  .prompt{margin-top:16px;border:1px solid #2a2926;border-radius:12px;overflow:hidden;background:#1b1a18;}
+  .prompt-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;
+    background:#232220;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .prompt-bar .lbl{font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:0.09em;text-transform:uppercase;color:#c9c5bf;}
+  .prompt-copy{font-family:var(--mono);font-weight:600;font-size:11px;color:#e9e6e1;background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.14);border-radius:7px;padding:6px 12px;cursor:pointer;transition:background .2s ease;flex:0 0 auto;}
+  .prompt-copy:hover{background:rgba(255,255,255,0.18);}
+  .prompt-copy.ok{color:#9fe0a6;border-color:rgba(159,224,166,0.4);}
+  .prompt pre{margin:0;padding:18px;overflow:auto;font-family:var(--mono);font-size:13px;line-height:1.7;
+    color:#e7e4df;white-space:pre-wrap;word-break:break-word;}
+
+  /* HONEST BOX */
+  .feat{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;border-top:3px solid var(--cloth-tx);}
+  .feat .ftag{display:inline-block;font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;
+    padding:5px 11px;border-radius:9999px;background:var(--cloth-bg);color:var(--cloth-tx);}
+  .feat h3{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);margin:14px 0 6px;}
+  .feat p{font-size:15px;color:var(--text);line-height:1.6;max-width:680px;}
+  @media(max-width:820px){.feat{padding:24px 20px;}}
+  .fineprint{margin-top:28px;font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.6;max-width:720px;}
+
+  /* CTA */
+  .cta{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:56px 48px;text-align:center;}
+  .cta h2{font-size:clamp(25px,3.3vw,35px);}
+  .cta p{color:var(--muted);font-size:16px;margin:14px auto 0;max-width:480px;}
+  .btn{display:inline-block;margin-top:28px;background:var(--cta);color:#fff;text-decoration:none;font-family:var(--sans);
+    font-weight:600;font-size:15px;padding:14px 26px;border-radius:6px;transition:background .2s ease,transform .12s ease;}
+  .btn:hover{background:#332e29;}
+  .btn:active{transform:scale(0.98);}
+  .cta-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:14px;}
+  .cta-btns .btn{margin-top:0;}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--border);}
+  .btn-ghost:hover{background:var(--bg);}
+  .btn-book{display:inline-flex;align-items:center;gap:9px;background:var(--brand);color:#fff;}
+  .btn-book:hover{background:var(--brand-dk);}
+  .btn-book svg{width:18px;height:18px;}
+  .cta-or{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:0.04em;margin-top:18px;}
+
+  /* FLOATING SIDE CTA */
+  .float-cta{position:fixed;right:22px;bottom:22px;z-index:60;max-width:312px;
+    background:var(--surface);border:1.5px solid var(--brand);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,0.10);transition:transform .14s ease,box-shadow .2s ease;}
+  .float-cta:hover{box-shadow:0 10px 30px rgba(0,0,0,0.14);transform:translateY(-2px);}
+  .fc-link{display:flex;align-items:center;gap:14px;text-decoration:none;padding:14px 16px;}
+  .fc-text{display:flex;flex-direction:column;line-height:1.3;}
+  .fc-text b{font-size:14px;color:var(--ink);font-weight:700;}
+  .fc-text span{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .fc-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:600;
+    font-size:11px;color:#fff;background:var(--brand);border-radius:9999px;padding:8px 12px;white-space:nowrap;}
+  .fc-btn svg{width:13px;height:13px;}
+  .fc-close{position:absolute;top:-9px;right:-9px;width:22px;height:22px;border-radius:50%;border:1px solid var(--border);
+    background:var(--surface);color:var(--muted);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.12);}
+  .fc-close:hover{color:var(--ink);}
+  @media(max-width:820px){
+    .float-cta{right:12px;left:12px;bottom:12px;max-width:none;}
+    .fc-link{justify-content:space-between;padding:12px 14px;}
+    .fc-text b{font-size:13.5px;}
+  }
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);padding:34px 0 56px;margin-top:70px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .h{font-family:var(--mono);font-weight:600;font-size:13px;color:var(--ink);letter-spacing:0.02em;}
+  footer .p{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:0.04em;}
+
+  /* MOTION */
+  .reveal{opacity:0;transform:translateY(12px);}
+  .reveal.in{opacity:1;transform:none;transition:opacity .6s cubic-bezier(0.16,1,0.3,1),transform .6s cubic-bezier(0.16,1,0.3,1);}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;}}
+
+  @media(max-width:820px){
+    .wrap{padding:0 22px;}
+    section{padding:46px 0;}
+    header.hero{padding:64px 0 24px;}
+    .cta{padding:40px 24px;}
+  }
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="page">
+
+  <nav>
+    <div class="wrap">
+      <a class="brand" href="https://ikapp.ai" target="_blank" rel="noopener">
+        <div class="mk"><span>I</span></div>
+        <b>Ikapp</b>
+      </a>
+      <div class="handle">@joudgor</div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow reveal">Saker du kan göra med AI</div>
+      <h1 class="reveal">Låt Claude analysera <em>marknaden</em> åt dig</h1>
+      <p class="lede reveal">Du kopplar Claude till live marknadsdata en gång. Sen frågar du på vanlig svenska: trend, RSI, Bollinger, volym, screeners, till och med backtester på färdiga strategier. <b>Claude hämtar siffrorna och räknar på dem åt dig.</b> Gratis, ingen API-nyckel, inget konto.</p>
+      <div class="fmt reveal">
+        <span>Claude</span>
+        <span>Gratis · MIT</span>
+        <span>Ingen API-nyckel</span>
+      </div>
+
+      <figure class="fig illus hero reveal">
+        <svg viewBox="0 0 1040 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Marknadsdata går in, Claude svarar med en analys">
+          <title>Marknadsdata in, analys ut</title>
+          <rect x="0" y="0" width="1040" height="420" rx="16" fill="#FBFBFA" stroke="#EAEAEA"/>
+
+          <!-- candles panel -->
+          <rect x="60" y="70" width="380" height="280" rx="14" fill="#FFFFFF" stroke="#E4E1DA"/>
+          <text x="84" y="102" font-family="'JetBrains Mono',monospace" font-size="11" fill="#787774">MARKNADSDATA</text>
+          <g stroke="#346538" stroke-width="8" stroke-linecap="round">
+            <line x1="106" y1="250" x2="106" y2="200"/><line x1="146" y1="262" x2="146" y2="214"/>
+            <line x1="266" y1="236" x2="266" y2="176"/><line x1="346" y1="212" x2="346" y2="146"/>
+          </g>
+          <g stroke="#9F2F2D" stroke-width="8" stroke-linecap="round">
+            <line x1="186" y1="276" x2="186" y2="228"/><line x1="226" y1="258" x2="226" y2="206"/>
+            <line x1="306" y1="228" x2="306" y2="188"/><line x1="386" y1="188" x2="386" y2="140"/>
+          </g>
+          <g stroke="#C9C4BC" stroke-width="1.5">
+            <line x1="86" y1="300" x2="414" y2="300"/><line x1="86" y1="180" x2="414" y2="180"/>
+          </g>
+          <path d="M100 286 L150 272 L200 254 L250 238 L300 210 L350 176 L400 158" fill="none" stroke="#B4481F" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- arrow -->
+          <path d="M462 210 h74 M528 200 l10 10 l-10 10" fill="none" stroke="#B4481F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- analysis panel -->
+          <rect x="560" y="70" width="420" height="280" rx="14" fill="#FFFFFF" stroke="#E4E1DA"/>
+          <text x="584" y="102" font-family="'JetBrains Mono',monospace" font-size="11" fill="#787774">CLAUDES ANALYS</text>
+          <rect x="584" y="118" width="120" height="26" rx="8" fill="#FBECE1"/>
+          <text x="644" y="136" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600" fill="#B4481F">TREND</text>
+          <rect x="712" y="118" width="96" height="26" rx="8" fill="#E1F3FE"/>
+          <text x="760" y="136" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600" fill="#1F6C9F">RSI</text>
+          <rect x="816" y="118" width="128" height="26" rx="8" fill="#EDF3EC"/>
+          <text x="880" y="136" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600" fill="#346538">VOLYM</text>
+          <g stroke="#E4E1DA" stroke-width="2" stroke-linecap="round">
+            <line x1="584" y1="176" x2="944" y2="176"/><line x1="584" y1="204" x2="912" y2="204"/>
+            <line x1="584" y1="232" x2="936" y2="232"/><line x1="584" y1="260" x2="868" y2="260"/>
+            <line x1="584" y1="288" x2="924" y2="288"/><line x1="584" y1="316" x2="800" y2="316"/>
+          </g>
+        </svg>
+      </figure>
+    </div>
+  </header>
+
+  <!-- STEG -->
+  <section class="wrap narrow" style="margin:0 auto;padding-top:8px">
+    <div class="sec-head reveal">
+      <h2>Steg för steg</h2>
+      <div class="sec-sub">Du gör steg 1 och 2 en gång. Sen kan du fråga Claude om marknaden när du vill.</div>
+    </div>
+
+    <div class="steps">
+
+      <div class="step reveal">
+        <div class="step-n">1</div>
+        <div>
+          <h3>Kopiera länken till projektet</h3>
+          <p>Det här är verktyget du ska installera. Du behöver inte leta upp det själv, <b>kopiera bara länken här nedanför</b>.</p>
+          <div class="prompt">
+            <div class="prompt-bar"><span class="lbl">Länken · kopiera</span><button class="prompt-copy" type="button">Kopiera</button></div>
+            <pre>https://github.com/atilaahmettaner/tradingview-mcp</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-n">2</div>
+        <div>
+          <h3>Låt Claude installera den åt dig</h3>
+          <p>Klistra in länken i Claude och säg åt den att installera projektet som en MCP-server. Claude sköter resten. Det är ett <b>Python-projekt</b>, så du behöver Python 3.10 eller senare och <b>uv</b> på datorn.</p>
+          <p>Kör Claude fast, ge den raden nedan. Den är projektets egen rekommenderade rad, och den ska du kopiera exakt.</p>
+          <div class="prompt">
+            <div class="prompt-bar"><span class="lbl">Installationsrad · kopiera exakt</span><button class="prompt-copy" type="button">Kopiera</button></div>
+            <pre>uv tool run --from git+https://github.com/atilaahmettaner/tradingview-mcp.git tradingview-mcp</pre>
+          </div>
+          <div class="note red"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span>Gissa inte namnet. Det finns ett <b>annat paket som heter nästan likadant</b>, från en helt annan utvecklare. Använd länken och raden ovan, inget annat.</span></div>
+        </div>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-n">3</div>
+        <div>
+          <h3>Fråga Claude om en symbol</h3>
+          <p>Nu kan du fråga på vanlig svenska. Skriv vilken symbol och vilken tidsram du menar, så hämtar Claude datan och räknar på den. Fråga till exempel: <b>"Analysera BTCUSDT på fyratimmarsgrafen. Vad säger trenden, RSI, Bollinger och volymen?"</b></p>
+          <p>Den klarar också screeners (dagens vinnare och förlorare), jämförelser mellan symboler, och backtester på färdiga strategier som RSI, MACD och Bollinger.</p>
+        </div>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-n">4</div>
+        <div>
+          <h3>Ge den bättre underlag</h3>
+          <p>Analysen blir bara så bra som det du matar in. Jag är ingen trader, så det här är där du tar över: berätta hur du tänker, vilka nivåer du bryr dig om, och vilka upplägg du vill att den jämför mot. Har du material från traders du litar på kan du låta Claude läsa det och resonera utifrån det.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ÄRLIGT -->
+  <section class="wrap narrow" style="margin:0 auto;padding-top:8px">
+    <div class="feat reveal">
+      <span class="ftag">Läs det här innan du kör</span>
+      <h3>Vad verktyget faktiskt gör, och inte gör</h3>
+      <p>Det här är inte finansiell rådgivning, och jag är inte trader. Verktyget hjälper dig att läsa marknadsdata snabbare, det är allt. Besluten och pengarna är dina.</p>
+    </div>
+
+    <div style="margin-top:18px">
+      <div class="note red reveal"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span><b>Ingen finansiell rådgivning.</b> Projektet skriver det själv. Claude kan ha fel, data kan vara fördröjd, och verktyget kan inte lägga några ordrar. Använd det aldrig som köpsignal.</span></div>
+
+      <div class="note blue reveal"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><span><b>Den läser inte din chart.</b> Den loggar aldrig in på ditt TradingView-konto. Den hämtar publik marknadsdata och indikatorer för den symbol du nämner och räknar på siffrorna. Dina egna ritningar, watchlists och inställningar ser den aldrig.</span></div>
+
+      <div class="note reveal"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span><b>Stockholmsbörsen funkar inte, och den varnar inte.</b> Frågar du om svenska aktier kan den tyst svara med kryptodata i stället. Kolla alltid vilken symbol och vilken börs svaret faktiskt gäller. Verktyget är byggt för krypto och de stora utländska börserna.</span></div>
+
+      <div class="note reveal"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span><b>Är det säkert?</b> Jag hittade inget känt problem: koden är öppen (MIT), inga säkerhetsvarningar, senast uppdaterad i juli 2026, ingen API-nyckel och den kan inte flytta pengar. Men ingen har granskat den åt dig, det gör inte Anthropic heller. En MCP-server är ett vanligt program som kör med dina rättigheter. Installera bara sådana där du ser vem som byggt dem och koden är öppen, och ge aldrig en sådan nycklar som kan flytta pengar.</span></div>
+
+      <div class="note reveal"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span><b>Gratis, men värt att veta.</b> Self-host är gratis och datan stannar på din dator. Samma utvecklare säljer också en betald hostad version, och då går dina frågor via hans server i stället. Vill du ha nyhets- och sentimentverktygen krävs en gratis Marketaux-nyckel.</span></div>
+    </div>
+
+    <p class="fineprint reveal">Projektet är inte kopplat till TradingView Inc. Siffrorna i den här guiden (stjärnor, licens, senaste uppdatering) är kontrollerade mot GitHub i juli 2026 och kan ha ändrats sen dess.</p>
+  </section>
+
+  <!-- CTA -->
+  <section id="kontakt" style="padding-top:8px">
+    <div class="wrap">
+      <div class="cta reveal">
+        <h2>Vill du lära dig AI, eller veta om ditt företag kan använda det?</h2>
+        <p>Jag hjälper dig komma igång, från första frågan till färdig rutin. Hör av dig så tar vi reda på om och var AI passar för dig eller ditt företag.</p>
+        <a class="btn btn-book" href="https://cal.com/jude-hwaijeh-oix30w/strategisamtal" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Boka ett strategisamtal</a>
+        <div class="cta-or">eller hör av dig direkt</div>
+        <div class="cta-btns">
+          <a class="btn btn-ghost" href="mailto:jude@ikapp.ai">Mejla jude@ikapp.ai</a>
+          <a class="btn btn-ghost" href="https://instagram.com/joudgor">Skriv på Instagram</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="h">@joudgor</div>
+      <div class="p">powered by Ikapp.ai</div>
+    </div>
+  </footer>
+
+  <div class="float-cta" id="floatCta">
+    <button class="fc-close" type="button" aria-label="Stäng">&times;</button>
+    <a class="fc-link" href="#kontakt">
+      <span class="fc-text">
+        <b>Kan ditt företag använda AI?</b>
+        <span>Eller vill du lära dig själv?</span>
+      </span>
+      <span class="fc-btn">Ta reda på det <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
+
+</div>
+
+<script>
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});}
+    else{
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+        });
+      },{threshold:0, rootMargin:'0px 0px 12% 0px'});
+      els.forEach(function(e){io.observe(e);});
+    }
+    document.querySelectorAll('.prompt-copy').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var pre = btn.closest('.prompt').querySelector('pre');
+        var txt = pre.innerText;
+        var done = function(){ btn.textContent='Kopierad'; btn.classList.add('ok'); setTimeout(function(){ btn.textContent='Kopiera'; btn.classList.remove('ok'); },1800); };
+        if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done, function(){ fallback(txt); done(); }); }
+        else { fallback(txt); done(); }
+      });
+    });
+    function fallback(t){ var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); }
+
+    var fc=document.getElementById('floatCta');
+    if(fc){ var fcc=fc.querySelector('.fc-close'); if(fcc){ fcc.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); fc.style.display='none'; }); } }
+  })();
+</script>
+</body>
+</html>
